@@ -241,7 +241,7 @@ while True: # game loop
         
         #if player.timea != player.base_timea:
         if abs(abs(enemy[1].x) - abs(player.x)) <= enemy[1].ranges:
-            enemy[1].set_action('short_attack')
+            enemy[1].set_action('attack')
             if enemy[1].flip == True:
                 enemy[1].set_flip(True)
         elif enemy_movement[0] == 0:
@@ -356,12 +356,4 @@ while True: # game loop
     pygame.display.update()
     clock.tick(60)
 
-
-
-""" player/idle/ 7;7;40 loop
-player/run/ 7;7 loop
-player/attack/ 7;7 loop
-enemy/idle/ 7;7;7 loop
-enemy/run/ 7;7 loop
-enemy/attack/ 7;7;7;7;7;7;7;7 loop """
         
