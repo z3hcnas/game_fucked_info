@@ -68,7 +68,7 @@ class physics_obj(object):
 # todo: add 3d physics-based movement
 
 class cuboid(object):
-    
+
     def __init__(self,x,y,z,x_size,y_size,z_size):
         self.x = x
         self.y = y
@@ -76,12 +76,12 @@ class cuboid(object):
         self.x_size = x_size
         self.y_size = y_size
         self.z_size = z_size
-        
+
     def set_pos(self,x,y,z):
         self.x = x
         self.y = y
         self.z = z
-        
+
     def collidecuboid(self,cuboid_2):
         cuboid_1_xy = pygame.Rect(self.x,self.y,self.x_size,self.y_size)
         cuboid_1_yz = pygame.Rect(self.y,self.z,self.y_size,self.z_size)
@@ -108,7 +108,7 @@ def blit_center(surf,surf2,pos):
 class entity(pygame.sprite.Sprite):
     global animation_database, animation_higher_database
    
-    def __init__(self,x,y,size_x,size_y,e_type,life, cooldown, ranges, speed=20, timea=2): # x, y, size_x, size_y, type
+    def __init__(self,x,y,size_x,size_y,e_type,life, short_attack_cooldown, long_attack_cooldown=0, ranges=20, speed=20, timea=2): # x, y, size_x, size_y, type
         super().__init__()
         self.x = x
         self.y = y
@@ -129,17 +129,19 @@ class entity(pygame.sprite.Sprite):
         self.entity_data = {}
         self.alpha = None
         self.life = life
-        self.cooldown = cooldown * 60
-        self.base_cooldown = cooldown * 60
+        self.short_attack_cooldown = short_attack_cooldown * 60
+        self.short_attack_base_cooldown = short_attack_cooldown * 60
+        self.long_attack_cooldown = long_attack_cooldown * 60
+        self.long_attack_base_cooldown = long_attack_cooldown * 60
         self.can_attack = True
         self.ranges = ranges
         self.speed = speed
         self.timea = timea * 60
         self.base_timea = timea * 60
-    
+
     def update(self):
         pass
- 
+
     def set_pos(self,x,y):
         self.x = x
         self.y = y
@@ -147,26 +149,31 @@ class entity(pygame.sprite.Sprite):
         self.obj.y = y
         self.obj.rect.x = x
         self.obj.rect.y = y
- 
+
     def move(self,momentum,platforms,ramps=[]):
         collisions = self.obj.move(momentum,platforms,ramps)
         self.x = self.obj.x
         self.y = self.obj.y
         return collisions
- 
-    def rect(self):
-        return pygame.Rect(self.x,self.y,self.size_x,self.size_y)
- 
+
+    def rect(self, x='', y=''):
+        if x == '':
+            x = self.x
+
+        if y == '':
+            y = self.y
+        return pygame.Rect(x, y,self.size_x,self.size_y)
+
     def set_flip(self,boolean):
         self.flip = boolean
- 
+
     def set_animation_tags(self,tags):
         self.animation_tags = tags
- 
+
     def set_animation(self,sequence):
         self.animation = sequence
         self.animation_frame = 0
- 
+
     def set_action(self,action_id,force=False):
         if (self.action == action_id) and (force == False):
             pass
