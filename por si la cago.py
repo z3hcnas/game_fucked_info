@@ -241,7 +241,7 @@ while True: # game loop
         
         #if player.timea != player.base_timea:
         if abs(abs(enemy[1].x) - abs(player.x)) <= enemy[1].ranges:
-            enemy[1].set_action('short_attack')
+            enemy[1].set_action('attack')
             if enemy[1].flip == True:
                 enemy[1].set_flip(True)
         elif enemy_movement[0] == 0:
@@ -271,13 +271,13 @@ while True: # game loop
         # definicion de el ataque enemigo
         if player.obj.rect.colliderect(enemy[1].obj.rect):
             #print(player.cooldown) 
-            if player.action == 'short_attack' and player.cooldown == player.base_cooldown and player.can_attack == True:
+            if player.action == 'attack' and player.cooldown == player.base_cooldown and player.can_attack == True:
                 enemy[1].life -= 50
                 player.can_attack = False
                 """ player.timea = player.base_timea - 60
                 player.cooldown = player.base_cooldown - 60 """
                 
-            elif player.action == 'long_attack' and player.cooldown == player.base_cooldown and player.can_attack == True:
+            elif player.action == 'lanza' and player.cooldown == player.base_cooldown and player.can_attack == True:
                 enemy[1].life -= 25
                 player.can_attack = False 
 
@@ -334,12 +334,12 @@ while True: # game loop
             if event.key == K_RIGHT:
                 moving_right = False
             if event.key == K_SPACE and player.cooldown == player.base_cooldown:
-                player.set_action('short_attack')
+                player.set_action('attack')
                 player.timea =  player.base_timea - 60
                
             
             if event.key == K_e:
-                player.set_action('long_attack')
+                player.set_action('lanza')
                 player.can_attack = False
                 player.timea =  player.base_timea - 60
 

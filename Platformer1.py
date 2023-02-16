@@ -1,4 +1,5 @@
-import pygame, sys
+import pygame, sys, random, noise
+import data.engine as e  
 
 clock = pygame.time.Clock()
 
@@ -25,7 +26,7 @@ class Player(pygame.sprite.Sprite):
         self.action='idle'
         self.frame = 0
         self.flip = False
-        self.rect = pygame.Rect(100,100,5,13)
+        self.rect = pygame.Rect(100,100,32,32)
         self.img = animation_frames['idle_0']
     
     def update(self):
@@ -101,47 +102,60 @@ class Player(pygame.sprite.Sprite):
     
 
 true_scroll = [0,0]
-def load_map(path):
-    f = open(path + '.txt','r')
-    data = f.read()
-    f.close()
-    data = data.split('\n')
-    game_map = []
-    for row in data:
-        game_map.append(list(row))
-    return game_map
+
+CHUNK_SIZE = 8
+def generate_chunk(x, y):
+    chunk_data = []
+    for y_pos in range(CHUNK_SIZE):
+        for x_pos in range(CHUNK_SIZE):
+            target_x = x * CHUNK_SIZE + x_pos
+            target_y = y * CHUNK_SIZE + y_pos
+            tile_type = 0
+            if target_y > 10:
+                tile_type = 2 # dirt
+            elif target_y == 10:
+                tile_type = 1 # grass
+            elif target_y == 9:
+                if random.randint(1,5) == 1:
+                    tile_type = 3 # plant
+                elif random.randint(1,20) == 1:
+                    tile_type = 5 # cactus
+                
+
+            elif target_y <= 4:
+                if random.randint(1, 60) == 1:
+                    tile_type = 4 # cloud
+            if tile_type != 0:
+                chunk_data.append([[target_x, target_y], tile_type])
+    return chunk_data
 
 
-global animation_frames
-animation_frames = {}
-def load_animation(path, frame_duration):
-    global animation_frames
-    animation_name = path.split('/')[-1]
-    animation_frame_data = []
-    n = 0
-    for frame in frame_duration:
-        animation_frame_id = animation_name + '_' + str(n)
-        img_loc = path + '/' + animation_frame_id + '.png'
-        animation_image = pygame.image.load(img_loc).convert()
-        animation_image.set_colorkey((255,255,255))
-        animation_frames[animation_frame_id] = animation_image.copy()
-        for i in range(frame):
-            animation_frame_data.append(animation_frame_id)
-        n += 1
-    return animation_frame_data
 
-animation_database = {}
-
-animation_database['run'] = load_animation('player_animations/run', [7, 7])
-animation_database['idle'] = load_animation('player_animations/idle', [7, 7, 40])
+e.load_animations('data/images/entities')
 
 
-game_map = load_map('map')
+game_map ={}
 
-grass_img = pygame.image.load('grass.png')
-dirt_img = pygame.image.load('dirt.png')
+dirt_img = pygame.image.load('data/images/arena.png')
+grass_img = pygame.image.load('data/images/transicion_arena_a_arenisca.png')
+plant_img = pygame.image.load('data/images/plant.png').convert()
+plant_img.set_colorkey((255,255,255))
 
-background_objects = [[0.25,[120,10,70,400]],[0.25,[280,30,40,400]],[0.5,[30,40,40,400]],[0.5,[130,90,100,400]],[0.5,[300,80,120,400]]]
+cloud_img = pygame.image.load('cloud.png').convert()
+cloud_img.set_colorkey((0,0,255))
+
+cactus_img = pygame.image.load('cactus.png').convert()
+cactus_img.set_colorkey((255,255,255))
+
+tile_index = {1:grass_img,
+              2:dirt_img,
+              3:plant_img,
+              4:cloud_img,
+              5:cactus_img  }
+
+background_objects = []
+
+
 
 player = Player()
 
@@ -157,27 +171,27 @@ while True: # game loop
     scroll[0] = int(scroll[0])
     scroll[1] = int(scroll[1])
 
-    pygame.draw.rect(display,(7,80,75),pygame.Rect(0,120,300,80))
+    pygame.draw.rect(display,(185,142,87),pygame.Rect(0,120,300,80))
     for background_object in background_objects:
         obj_rect = pygame.Rect(background_object[1][0]-scroll[0]*background_object[0],background_object[1][1]-scroll[1]*background_object[0],background_object[1][2],background_object[1][3])
         if background_object[0] == 0.5:
-            pygame.draw.rect(display,(14,222,150),obj_rect)
+            pygame.draw.rect(display,(133,98,52),obj_rect)
         else:
-            pygame.draw.rect(display,(9,91,85),obj_rect)
+            pygame.draw.rect(display,(230,166,68),obj_rect)
 
     tile_rects = []
-    y = 0
-    for layer in game_map:
-        x = 0
-        for tile in layer:
-            if tile == '1':
-                display.blit(dirt_img,(x*16-scroll[0],y*16-scroll[1]))
-            if tile == '2':
-                display.blit(grass_img,(x*16-scroll[0],y*16-scroll[1]))
-            if tile != '0':
-                tile_rects.append(pygame.Rect(x*16,y*16,16,16))
-            x += 1
-        y += 1
+    # tile rendering
+    for y in range(3):
+        for x in range(4):
+            target_x = x - 1 + int(round(scroll[0]/(CHUNK_SIZE*16)))
+            target_y = y - 1 + int(round(scroll[1]/(CHUNK_SIZE*16)))
+            target_chunk = str(target_x) + ';' + str(target_y)
+            if target_chunk not in game_map:
+                game_map[target_chunk] = generate_chunk(target_x, target_y)
+            for tile in game_map[target_chunk]:
+                display.blit(tile_index[tile[1]], (tile[0][0]*16-scroll[0], tile[0][1]*16-scroll[1]))
+                if tile[1] in [1, 2]:
+                    tile_rects.append(pygame.Rect(tile[0][0]*16, tile[0][1]*16, 16, 16))
 
     player_movement = player.choose_direction()
     player.choose_action(player_movement)
@@ -196,7 +210,7 @@ while True: # game loop
                 player.moving_right = True
             if event.key == K_LEFT:
                 player.moving_left = True
-            if event.key == K_UP:
+            if event.key == K_UP or event.key == K_SPACE:
                 if player.air_timer < 6:
                     player.vertical_momentum = -5
         if event.type == KEYUP:
