@@ -122,13 +122,13 @@ bg_colors = {0: [[7,80,75], [14,222,150], [9,91,85]], 1:[[185,142,87], [164,130,
 
 background_objects = []
 
-player = e.entity(100, 100, 32, 32, 'player', 100, 3,1, 20, 20, 1.5)
+player = e.entity(100, 100, 50, 50, 'player', 100, 3,1, 20, 3, 1.5)
 
 enemies = []
 
 for i in range(1):
-
-    enemies.append([0, e.entity(random.randint(0, 600)-300, 80, 64, 64, 'yeti', 100, 3, 80, 100)])
+    #enemies.append([0, e.entity(random.randint(0, 600)-300, 80, 64, 64, 'momy', 100, 3, 80, 100)])
+    enemies.append([0, e.entity(random.randint(0, 600)-300, 80, 32, 29, 'pinxo_ball', 100, 3, 80, 100, 2.2)])
 
 
 
@@ -146,12 +146,12 @@ while True: # game loop
 
     # change the biom#if self.type == 'player':
         #image = pygame.transform.scale(image, (50, 50))a
-    if player.x <= 200:
+    """ if player.x <= 200:
         bioma = 0
     elif player.x <= 400:
         bioma = 1
     elif player.x <= 600:
-        bioma = 2
+        bioma = 2 """
 
 
     bg = bg_colors[1]
@@ -193,10 +193,10 @@ while True: # game loop
 
     # movimiento player
     player_movement = [0,0]
-    if moving_right == True and player.x <= 550:
-        player_movement[0] += 2
-    if moving_left == True and player.x >= -350:
-        player_movement[0] -= 2
+    if moving_right == True and player.x <= 500:
+        player_movement[0] += player.speed
+    if moving_left == True and player.x >= -300:
+        player_movement[0] -= player.speed
     player_movement[1] += vertical_momentum
     vertical_momentum += 0.2
     if vertical_momentum > 3:
@@ -227,8 +227,9 @@ while True: # game loop
 
 
     for enemy in enemies:
+        #print(enemy[1].life)
         enemy[0] += 1
-        speed = 1
+        speed = enemy[1].speed
         if enemy[0] > 3:
             enemy[0] = 3
         enemy_movement = [0,enemy[0]]
@@ -285,8 +286,6 @@ while True: # game loop
                     pygame.QUIT()
 
 
-
-
         if enemy[1].life <= 0:
             enemy[1].kill()
             enemies.remove(enemy)
@@ -309,7 +308,7 @@ while True: # game loop
         if player.action == 'short_attack':
             player.short_attack_cooldown =  player.short_attack_base_cooldown - 60
         elif player.action == 'long_attack':
-            player.size_x = 32
+            player.size_x = 50
             player.obj.rect = player.rect()
             player.long_attack_cooldown =  player.long_attack_base_cooldown - 60
 
@@ -344,9 +343,9 @@ while True: # game loop
 
             if event.key == K_e and player.long_attack_cooldown == player.long_attack_base_cooldown:
                 player.set_action('long_attack')
-                player.size_x = 50
+                player.size_x = 70
                 if player.flip:
-                    player.obj.rect = player.rect(player.x-18)
+                    player.obj.rect = player.rect(player.x+20)
                 else:
                     player.obj.rect = player.rect()
                 player.timea =  player.base_timea - 60
