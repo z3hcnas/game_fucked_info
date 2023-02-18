@@ -108,7 +108,7 @@ def blit_center(surf,surf2,pos):
 class entity(pygame.sprite.Sprite):
     global animation_database, animation_higher_database
    
-    def __init__(self,x,y,size_x,size_y,e_type,life, short_attack_cooldown, long_attack_cooldown=0, ranges=20, speed=1, timea=2): # x, y, size_x, size_y, type
+    def __init__(self,x,y,size_x,size_y,e_type,life, short_attack_cooldown, long_attack_cooldown=0, bullet_cooldown = 0, ranges=20, speed=1, timea=2):
         super().__init__()
         self.x = x
         self.y = y
@@ -133,6 +133,8 @@ class entity(pygame.sprite.Sprite):
         self.short_attack_base_cooldown = short_attack_cooldown * 60
         self.long_attack_cooldown = long_attack_cooldown * 60
         self.long_attack_base_cooldown = long_attack_cooldown * 60
+        self.bullet_cooldown = bullet_cooldown * 60
+        self.bullet_base_cooldown = bullet_cooldown * 60
         self.can_attack = True
         self.ranges = ranges
         self.speed = speed
