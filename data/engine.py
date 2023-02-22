@@ -129,6 +129,7 @@ class entity(pygame.sprite.Sprite):
         self.entity_data = {}
         self.alpha = None
         self.life = life
+        self.can_bullet = True
         self.short_attack_cooldown = short_attack_cooldown * 60
         self.short_attack_base_cooldown = short_attack_cooldown * 60
         self.long_attack_cooldown = long_attack_cooldown * 60
