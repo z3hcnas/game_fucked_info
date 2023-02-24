@@ -21,7 +21,7 @@ air_timer = 0
 
 true_scroll = [2,2]
 
-bioma = 2
+bioma = 1
 
 def load_map(path):
     f = open(path + '.txt','r')
@@ -122,15 +122,15 @@ bg_colors = {0: [[7,80,75], [14,222,150], [9,91,85]], 1:[[185,142,87], [164,130,
 
 background_objects = []
 
-player = e.entity(100, 100, 50, 50, 'player', 100, 3,1,5, 20, 3, 1.5)
+player = e.entity(100, 100, 50, 50, 'player', 200, 1.5,1,3, 20, 3, 1.7)
 bullet = False
 enemies = []
 
 
 
-for i in range(1):
-    enemies.append([0, e.entity(random.randint(0, 600)-300, 80, 64, 64, 'yeti', 100, 3, 80, 100)])
-    #enemies.append([0, e.entity(random.randint(0, 600)-300, 80, 32, 29, 'pinxo_ball', 100, 3,1, 80, 100, 2.2)])
+for i in range(2):
+    enemies.append([0, e.entity(random.randint(0, 600)-300, 80, 64, 64, 'momy', 100, 3, 60, 100)])
+    enemies.append([0, e.entity(random.randint(0, 600)-300, 80, 32, 29, 'pinxo_ball', 50, 3,1, 50, 100, 2.2)])
 
 
 
@@ -380,7 +380,7 @@ while True: # game loop
         if event.type == KEYUP:
             if event.key == K_d:
                 moving_right = False
-            if event.key == K_q and player.short_attack_cooldown == player.short_attack_base_cooldown:
+            if event.key == K_k and player.short_attack_cooldown == player.short_attack_base_cooldown:
                 player.set_action('short_attack')
                 player.timea =  player.base_timea - 60
 
@@ -391,7 +391,7 @@ while True: # game loop
                 player.can_bullet = False
                 
 
-            if event.key == K_e and player.long_attack_cooldown == player.long_attack_base_cooldown:
+            if event.key == K_l and player.long_attack_cooldown == player.long_attack_base_cooldown:
                 player.set_action('long_attack')
                 player.size_x = 70
                 if player.flip:
