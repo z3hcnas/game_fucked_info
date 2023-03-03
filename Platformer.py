@@ -23,6 +23,12 @@ true_scroll = [2,2]
 
 bioma = 1
 
+stage = 0
+wave = 0
+finishWave = False
+
+
+
 def load_map(path):
     f = open(path + '.txt','r')
     data = f.read()
@@ -190,6 +196,24 @@ while True: # game loop
 
                 if tile[1] in [1, 2]:
                     tile_rects.append(pygame.Rect(tile[0][0]*16, tile[0][1]*16, 16, 16))
+
+    if finishWave == True:
+        wave += 1
+        bioma += 1
+        # definir siguiente oleada
+
+
+        finishWave = False
+        if wave ==3:
+            wave = 0
+            stage +=1
+        if stage == 3:
+            print('finish game')
+            pygame.exit()
+    
+    if len(enemies) == 0:
+        finishWave == True
+        
 
     # movimiento player
     player_movement = [0,0]
